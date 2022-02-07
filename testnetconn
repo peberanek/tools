@@ -1,0 +1,12 @@
+#!/usr/bin/bash
+#
+# Test Internet connection
+#
+
+public_web='www.google.com'
+echo "Sending HTTP request to ${public_web}..."
+curl -I "${public_web}"
+
+public_dns_server='8.8.8.8'
+echo "Tracing route to ${public_dns_server}..."
+traceroute 8.8.8.8
