@@ -3,10 +3,43 @@
 # Test Internet connection
 #
 
-public_web='www.google.com'
-echo "Sending HTTP request to ${public_web}..."
-curl -I "${public_web}"
+readonly COLOR_GREEN='\e[32m'
+readonly COLOR_RED='\e[31m'
+readonly COLOR_RESET='\e[0m'
 
-public_dns_server='8.8.8.8'
-echo "Tracing route to ${public_dns_server}..."
-traceroute 8.8.8.8
+err() {
+    local msg="$*"
+    echo -e "${COLOR_RED}${msg}${COLOR_RESET}" >&2
+    echo
+}
+
+ok() {
+    local msg="$*"
+    echo -e "${COLOR_GREEN}${msg}${COLOR_RESET}"
+    echo
+}
+
+declare -a public_dns_servers web_servers
+public_dns_servers=('8.8.8.8' '208.67.222.123' '208.67.220.123')
+web_servers=('www.google.com' 'www.amazon.com' 'www.nic.cz')
+
+for ip in "${public_dns_servers[@]}"; do
+    echo "Trying to ping ${ip}..."
+    if ping -c 3 "${ip}"; then
+        ok "Reached ${ip}"
+        break
+    else
+        err "Failed to ping ${ip}"
+        traceroute "${ip}"
+    fi
+done
+
+for server in "${web_servers[@]}"; do
+    echo "Sending HTTP request to ${server}..."
+    if curl -I "${server}"; then
+        ok "Got response from ${server}"
+        break
+    else
+        err "Failed to ping ${server}"
+    fi
+done
