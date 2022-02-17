@@ -1,0 +1,17 @@
+#!/bin/bash
+#
+# Notify me when the pending rpm-ostree deployment contains security advisories.
+#
+
+msg_summary='Security Advisories Available'
+msg_body="Pending rpm-ostree deployment contains security advisories. Consider to \
+reboot the system."
+frequency="1h"
+
+while true; do
+    if rpm-ostree status | grep 'SecAdvisories'; then
+        # Use urgency critical to ensure I won't overlook the notification
+        notify-send --urgency=critical "${msg_summary}" "${msg_body}"
+    fi
+    sleep "${frequency}"
+done
