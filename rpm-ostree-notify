@@ -8,6 +8,8 @@ msg_body="Pending rpm-ostree deployment contains security advisories. Consider t
 reboot the system."
 frequency="1h"
 
+sleep "5m"  # Let rpm-ostree download latest updates
+
 while true; do
     if rpm-ostree status | grep 'SecAdvisories'; then
         # Use urgency critical to ensure I won't overlook the notification
