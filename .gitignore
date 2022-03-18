@@ -1,1 +1,3 @@
 rpm-ostree-notify.conf
+__pycache__/
+venv

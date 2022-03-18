@@ -25,3 +25,14 @@ Config files:
     Exec=FIXME
     Type=Application
     ```
+
+## Testing
+
+Tests are written in Python 3 using Pytest. Install Python venv and run the tests like this:
+
+```bash
+python3 -m venv venv  # create a new venv
+source venv/bin/activate
+python3 -m pip install pytest
+python3 -m pytest  # run all tests
+```
