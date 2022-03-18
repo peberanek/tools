@@ -29,6 +29,7 @@ def test_no_args():
     assert "error" in proc.stderr.decode("utf-8").lower()
 
 
+@pytest.mark.online
 def test_currency_only():
     """Test prog with only the CURRENCY arg.
 
@@ -40,6 +41,7 @@ def test_currency_only():
     assert decimal.match(proc.stdout.decode("utf-8"))
 
 
+@pytest.mark.online
 def test_currency_and_date():
     """Test prog with both the CURRENCY and the DATE args.
 
@@ -53,6 +55,7 @@ def test_currency_and_date():
     assert stdout.strip() == "21.615"  # remove trailing newline
 
 
+@pytest.mark.online
 @pytest.mark.parametrize("code", ["foo", "2022-01-01"])
 def test_invalid_currency_code(code):
     """Test prog fails with an invalid CURRENCY code.
@@ -64,6 +67,7 @@ def test_invalid_currency_code(code):
     assert "error" in proc.stderr.decode("utf-8").lower()
 
 
+@pytest.mark.online
 def test_flipped_currency_and_date():
     """Test prog fails when CURRENCY and DATE args are flipped.
 
