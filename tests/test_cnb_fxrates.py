@@ -12,7 +12,7 @@ import subprocess
 import pytest
 
 working_dir: str = os.path.dirname(os.path.realpath(__file__))
-prog_path: str = f"{working_dir}/cnb-fxrates"
+prog_path: str = f"{working_dir}/../cnb-fxrates"
 decimal = re.compile(r"\d+\.\d{3}")
 
 

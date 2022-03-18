@@ -34,5 +34,6 @@ Tests are written in Python 3 using Pytest. Install Python venv and run the test
 python3 -m venv venv  # create a new venv
 source venv/bin/activate
 python3 -m pip install pytest
+cd tests/  # pytest config files lives there
 python3 -m pytest  # run all tests
 ```
