@@ -35,7 +35,6 @@ class TestQuery:
 
     mock_url = {"CNB_FXRATES_URL": f"file://{sample_fxrates}"}
 
-    @pytest.mark.online
     def test_currency_only(self, query):
         """Test prog with only the CURRENCY arg.
 
@@ -47,7 +46,6 @@ class TestQuery:
         assert proc.returncode == 0
         assert decimal.match(proc.stdout.decode("utf-8"))
 
-    @pytest.mark.online
     def test_currency_and_date(self, query):
         """Test prog with both the CURRENCY and the DATE args.
 
@@ -55,13 +53,14 @@ class TestQuery:
         DATE as a decimal digit.
         """
         env = self.mock_url if query == "mock" else None
-        proc = subprocess.run([prog_path, "USD", "2022-02-01"], capture_output=True, env=env)
+        proc = subprocess.run(
+            [prog_path, "USD", "2022-02-01"], capture_output=True, env=env
+        )
         assert proc.returncode == 0
         stdout = proc.stdout.decode("utf-8")
         assert decimal.match(stdout)
         assert stdout.strip() == "21.615"  # remove trailing newline
 
-    @pytest.mark.online
     @pytest.mark.parametrize("code", ["foo", "2022-01-01"])
     def test_invalid_currency_code(self, query, code):
         """Test prog fails with an invalid CURRENCY code.
@@ -73,13 +72,14 @@ class TestQuery:
         assert proc.returncode == 1
         assert "error" in proc.stderr.decode("utf-8").lower()
 
-    @pytest.mark.online
     def test_flipped_currency_and_date(self, query):
         """Test prog fails when CURRENCY and DATE args are flipped.
 
         prog must return non-zero exit status and print an error msg into STDERR.
         """
         env = self.mock_url if query == "mock" else None
-        proc = subprocess.run([prog_path, "2022-02-01", "USD"], capture_output=True, env=env)
+        proc = subprocess.run(
+            [prog_path, "2022-02-01", "USD"], capture_output=True, env=env
+        )
         assert proc.returncode == 1
         assert "error" in proc.stderr.decode("utf-8").lower()
