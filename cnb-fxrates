@@ -24,8 +24,13 @@ Examples:
 
     Get EUR-CZK exchange rate valid for the current date.
     $ ${prog_name} EUR
+
+Environment variables:
+
+    CNB_FXRATES_URL: URL to the file with foreign exchange market rates data.
+        Used primarily for testing.
 "
-url='https://www.cnb.cz/en/financial-markets/foreign-exchange-market/central-bank-exchange-rate-fixing/central-bank-exchange-rate-fixing/daily.txt'
+url="${CNB_FXRATES_URL:-https://www.cnb.cz/en/financial-markets/foreign-exchange-market/central-bank-exchange-rate-fixing/central-bank-exchange-rate-fixing/daily.txt}"
 currency="${1}"
 my_date="${2:-$(date --iso-8601)}"  # If date is not provided, use current date.
 
