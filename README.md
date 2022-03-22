@@ -37,3 +37,29 @@ python3 -m pip install pytest
 cd tests/  # pytest config files lives there
 python3 -m pytest  # run all tests
 ```
+
+## Commits
+
+Use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
+
+### Examples
+
+```text
+docs: correct spelling of README
+test: mark tests requiring internet connection
+feat(rpm-ostree-notify): use a config file
+```
+
+### Git hook
+
+Install git hook for auto-checking the commit message:
+
+```bash
+cd .git/hooks/ && ln -s ../../.githooks/commit-msg commit-msg && cd -
+```
+
+If you need to bypass commit-msg hook check, use:
+
+```bash
+git commit -m "foobar" --no-verify
+```

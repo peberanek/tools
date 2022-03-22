@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+#
+# Validate the Conventional Commits specification
+# (https://www.conventionalcommits.org/en/v1.0.0/)
+#
+# Inspired by https://github.com/trezor/trezor-firmware/blob/master/COMMITS.md
+#
+
+type="(docs|feat|fix|perf|refactor|style|test|chore|revert)"
+scope="(cnb-fxrates|rpm-ostree-notify|testnetconn)"
+
+if ! grep --quiet --extended-regexp "^${type}(\(${scope}\))?: " "${1}" ; then
+  echo "Conventional Commits validation failed."
+  echo
+  echo "Use one of the following types: ${type}"
+  echo "Use an optional scope: ${scope}"
+  echo
+  echo "Invalid commit message:"
+  grep --invert-match "^#" "${1}"
+  exit 1
+fi
