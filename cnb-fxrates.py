@@ -4,7 +4,7 @@ from datetime import date
 
 parser = argparse.ArgumentParser()
 parser.add_argument("currency", help="currency ISO code, e.g. USD")
-parser.add_argument("date", help="date in ISO format, e.g. 2022-01-01")
+parser.add_argument("date", nargs='?', default=date.today().isoformat(), help="optional date in ISO format, e.g. 2022-01-01; default: today")
 args = parser.parse_args()
 
 my_date = date.fromisoformat(args.date)
