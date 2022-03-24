@@ -1,7 +1,7 @@
 import argparse
+import sys
 import urllib.request
 from datetime import date
-import sys
 
 
 def get_fx_rates(url):
