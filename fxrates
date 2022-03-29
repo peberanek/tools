@@ -14,7 +14,9 @@ TODO:
 """
 
 import argparse
+import os
 import sys
+import textwrap
 import urllib.request
 from datetime import date
 
@@ -43,12 +45,20 @@ def get_fx_rates(url):
 def main():
     """Script entry point"""
 
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog=textwrap.dedent(
+            """\
+            environment variables:
+              FXRATES_URL custom url to a file containing FX rates, e.g. file:///path/to/daily.txt
+        """
+        ),
+    )
+
     parser.add_argument("currency", help="currency ISO code, e.g. USD")
     parser.add_argument(
         "date",
         nargs="?",
-        default=date.today().isoformat(),
         help="optional date in ISO format, e.g. 2022-01-01; default: today",
     )
     args = parser.parse_args()
@@ -88,17 +98,23 @@ def main():
         "XDR",
         "ZAR",
     ]
-    my_date = date.fromisoformat(args.date)
-    file_url = "https://www.cnb.cz/en/financial-markets/foreign-exchange-market/central-bank-exchange-rate-fixing/central-bank-exchange-rate-fixing/daily.txt"
-    url_query = f"?date={my_date.strftime('%d.%m.%Y')}"
+    custom_url = os.getenv("FXRATES_URL")
+    if custom_url:
+        file_url = custom_url
+    else:
+        file_url = "https://www.cnb.cz/en/financial-markets/foreign-exchange-market/central-bank-exchange-rate-fixing/central-bank-exchange-rate-fixing/daily.txt"
+    if args.date:
+        # add URL query '?date=DD.MM.YYYY'
+        file_url += f"?date={date.fromisoformat(args.date).strftime('%d.%m.%Y')}"
 
     if args.currency not in valid_currencies:
         print(
-            f"error: invalid currency code; valid codes: {' '.join(valid_currencies)}"
+            f"error: invalid currency code; valid codes: {' '.join(valid_currencies)}",
+            file=sys.stderr,
         )
         sys.exit(1)
 
-    fx_rates = get_fx_rates(file_url + url_query)
+    fx_rates = get_fx_rates(file_url)
     print(fx_rates[args.currency])
 
 
