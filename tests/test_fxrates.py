@@ -9,12 +9,17 @@ import os
 import re
 import subprocess
 
-import pytest
+# pytest is available via venv
+import pytest  # pylint: disable=import-error
 
 working_dir: str = os.path.dirname(os.path.realpath(__file__))
 prog_path: str = f"{working_dir}/../fxrates"
 decimal = re.compile(r"\d+\.\d{3}")
 sample_fxrates = f"{working_dir}/daily.txt"
+
+# Tests often make prog to exit with non-zero exit code, raising an error
+# is not necessary.
+# pylint: disable=subprocess-run-check
 
 
 def test_no_args():

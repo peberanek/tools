@@ -29,9 +29,9 @@ def get_fx_rates(url):
     Returns: dict(currency_code: str, fx_rate: str)
     """
     with urllib.request.urlopen(url) as response:
-        data = response.read().decode("utf-8")  # FIXME: don't guess the data encoding
+        data = response.read().decode("utf-8")
 
-    fx_rates = dict()
+    fx_rates = {}
     for line in data.split("\n")[2:]:  # skip ID and header lines
         fields = line.split("|")
         if line == "":
@@ -102,6 +102,7 @@ def main():
     if custom_url:
         file_url = custom_url
     else:
+        # pylint: disable=line-too-long
         file_url = "https://www.cnb.cz/en/financial-markets/foreign-exchange-market/central-bank-exchange-rate-fixing/central-bank-exchange-rate-fixing/daily.txt"
     if args.date:
         # add URL query '?date=DD.MM.YYYY'
