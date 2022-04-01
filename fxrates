@@ -11,50 +11,65 @@ https://www.cnb.cz/en/financial-markets/foreign-exchange-market/central-bank-exc
 TODO:
     * Emit warning: Foreign exchange market rates as of a given date are
       updated only once a day (every working day after 2.30 p.m.).
+    * With effect from 2 March 2022, the CNB has suspended the publication
+      of the exchange rate of the Russian rouble (RUB).
 """
 
 import argparse
 import os
+import re
 import sys
 import textwrap
 import urllib.request
 from datetime import date
+from typing import Dict
+from urllib.error import URLError
 
 
-def get_fx_rates(url):
-    """Return FX rates from URL as dict.
+def parse(data: str) -> Dict[str, str]:
+    """Return FX rates from data as dict.
 
     Supports only the format provided by the Czech National Bank.
 
     Returns: dict(currency_code: str, fx_rate: str)
     """
-    with urllib.request.urlopen(url) as response:
-        data = response.read().decode("utf-8")
-
     fx_rates = {}
     for line in data.split("\n")[2:]:  # skip ID and header lines
-        fields = line.split("|")
         if line == "":
             # If data ends with newline, the last line is empty.
             continue
+        fields = line.split("|")
         fx_rates[fields[-2]] = fields[-1]
-
     return fx_rates
+
+
+def fetch_data(url: str) -> str:
+    """Return text data from URL as an UTF-8 string."""
+    try:
+        with urllib.request.urlopen(url) as response:
+            data = response.read().decode("utf-8")
+        return data
+    except URLError as error:
+        print(f"error: {error.reason}", file=sys.stderr)
+        sys.exit(1)
 
 
 def main():
     """Script entry point"""
 
+    #
+    # parse args
+    #
+
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=textwrap.dedent(
-            """\
+            """
             environment variables:
               FXRATES_URL custom url to a file containing FX rates, e.g. file:///path/to/daily.txt
-        """
+            """
         ),
     )
-
     parser.add_argument("currency", help="currency ISO code, e.g. USD")
     parser.add_argument(
         "date",
@@ -62,6 +77,10 @@ def main():
         help="optional date in ISO format, e.g. 2022-01-01; default: today",
     )
     args = parser.parse_args()
+
+    #
+    # check values of args
+    #
 
     valid_currencies = [
         "AUD",
@@ -98,25 +117,43 @@ def main():
         "XDR",
         "ZAR",
     ]
-    custom_url = os.getenv("FXRATES_URL")
-    if custom_url:
-        file_url = custom_url
-    else:
-        # pylint: disable=line-too-long
-        file_url = "https://www.cnb.cz/en/financial-markets/foreign-exchange-market/central-bank-exchange-rate-fixing/central-bank-exchange-rate-fixing/daily.txt"
-    if args.date:
-        # add URL query '?date=DD.MM.YYYY'
-        file_url += f"?date={date.fromisoformat(args.date).strftime('%d.%m.%Y')}"
-
     if args.currency not in valid_currencies:
         print(
-            f"error: invalid currency code; valid codes: {' '.join(valid_currencies)}",
+            f"error: invalid currency code '{args.currency}';"
+            f" valid codes: {' '.join(valid_currencies)}",
             file=sys.stderr,
         )
         sys.exit(1)
 
-    fx_rates = get_fx_rates(file_url)
-    print(fx_rates[args.currency])
+    if args.date:
+        try:
+            date.fromisoformat(args.date)
+        except ValueError as error:
+            print(f"error: {error}", file=sys.stderr)
+            sys.exit(1)
+
+    #
+    # print FX rate
+    #
+
+    default_url = "https://www.cnb.cz/en/financial-markets/foreign-exchange-market/central-bank-exchange-rate-fixing/central-bank-exchange-rate-fixing/daily.txt"  # pylint: disable=line-too-long
+    custom_url = os.getenv("FXRATES_URL")
+    url = custom_url if custom_url else default_url
+    if args.date:
+        # add URL query '?date=DD.MM.YYYY'
+        url += f"?date={date.fromisoformat(args.date).strftime('%d.%m.%Y')}"
+
+    fx_rates: Dict[str, str] = parse(fetch_data(url))
+    rate: str = fx_rates[args.currency]
+    re_decimal = r"^\d+\.\d{3}$"
+    if not re.match(re_decimal, rate):
+        print(
+            f"error: internal error: parsed FX rate '{rate}' violates"
+            f" the expected format '{re_decimal}'.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+    print(rate)
 
 
 if __name__ == "__main__":
