@@ -9,8 +9,6 @@ Further details:
 https://www.cnb.cz/en/financial-markets/foreign-exchange-market/central-bank-exchange-rate-fixing/central-bank-exchange-rate-fixing/
 
 TODO:
-    * Emit warning: Foreign exchange market rates as of a given date are
-      updated only once a day (every working day after 2.30 p.m.).
     * With effect from 2 March 2022, the CNB has suspended the publication
       of the exchange rate of the Russian rouble (RUB).
 """
@@ -21,7 +19,7 @@ import re
 import sys
 import textwrap
 import urllib.request
-from datetime import date
+from datetime import datetime, date
 from typing import Dict
 from urllib.error import URLError
 
@@ -131,6 +129,23 @@ def main():
         except ValueError as error:
             print(f"error: {error}", file=sys.stderr)
             sys.exit(1)
+        if date.fromisoformat(args.date) > date.today():
+            print(
+                f"error: invalid date '{args.date}', date must be =< today date",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+    if not args.date or date.fromisoformat(args.date) == date.today():
+        now = datetime.now()
+        update_time = now.replace(hour=14, minute=30, second=0, microsecond=0)
+        if date.today().weekday() not in (5, 6) and now < update_time:
+            print(
+                "warning: exchange rates are declared every working day after"
+                " 2.30 p.m. and are valid for the current working day and,"
+                " where relevant, the following Saturday, Sunday or public"
+                " holiday",
+                file=sys.stderr,
+            )
 
     #
     # print FX rate
