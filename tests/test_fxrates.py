@@ -9,12 +9,17 @@ import os
 import re
 import subprocess
 
-import pytest
+# pytest is available via venv
+import pytest  # pylint: disable=import-error
 
 working_dir: str = os.path.dirname(os.path.realpath(__file__))
-prog_path: str = f"{working_dir}/../cnb-fxrates"
+prog_path: str = f"{working_dir}/../fxrates"
 decimal = re.compile(r"\d+\.\d{3}")
 sample_fxrates = f"{working_dir}/daily.txt"
+
+# Tests often make prog to exit with non-zero exit code, raising an error
+# is not necessary.
+# pylint: disable=subprocess-run-check
 
 
 def test_no_args():
@@ -24,16 +29,16 @@ def test_no_args():
     a help msg into STDOUT.
     """
     proc = subprocess.run([prog_path], capture_output=True)
-    assert proc.returncode == 1
-    for keyword in ("usage", "examples"):
-        assert keyword in proc.stdout.decode("utf-8").lower()
-    assert "error" in proc.stderr.decode("utf-8").lower()
+    assert proc.returncode != 0
+    for keyword in ("usage", "error"):
+        assert keyword in proc.stderr.decode("utf-8").lower()
 
 
 @pytest.mark.parametrize("query", ["mock", "online"])
 class TestQuery:
+    """Test prog queries a test file or CNB web service correctly."""
 
-    mock_url = {"CNB_FXRATES_URL": f"file://{sample_fxrates}"}
+    mock_url = {"FXRATES_URL": f"file://{sample_fxrates}"}
 
     def test_currency_only(self, query):
         """Test prog with only the CURRENCY arg.

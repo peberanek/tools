@@ -8,9 +8,9 @@
 #
 
 type="(docs|feat|fix|perf|refactor|style|test|chore|revert)"
-scope="(cnb-fxrates|rpm-ostree-notify|testnetconn)"
+scope="(fxrates|rpm-ostree-notify|testnetconn)"
 
-if ! grep --quiet --extended-regexp "^${type}(\(${scope}\))?: " "${1}" ; then
+if ! grep --quiet --extended-regexp "^${type}(\(${scope}\))?(\!)?: " "${1}" ; then
   echo "Conventional Commits validation failed."
   echo
   echo "Use one of the following types: ${type}"
