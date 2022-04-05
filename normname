@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+#
+# Normalize (rename) filename according to the rules below:
+#   * Change uppercase to lowercase.
+#   * Replace whitespaceses with underscores.
+#   * Remove Czech diacritics.
+#
+# Args:
+#   $1: filename to normalize
+#
+
+set -o errexit
+
+
+orig_path="${1}"
+orig_dir=$(dirname "${orig_path}")
+orig_name=$(basename "${orig_path}")
+
+diacritics='ěščřžýáíéĚŠČŘŽÝÁÍÉ'
+no_diacritics='escrzyaieESCRZYAIE'
+new_name=$(\
+    echo "${orig_name}" \
+    | tr '[:upper:]' '[:lower:]' \
+    | tr ' ' '_' \
+    | sed "y/${diacritics}/${no_diacritics}/" \
+)
+new_path="${orig_dir}/${new_name}"
+
+echo "${orig_path} -> ${new_path}"
+mv "${orig_path}" "${new_path}"
