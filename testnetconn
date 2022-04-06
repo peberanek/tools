@@ -7,39 +7,53 @@ readonly COLOR_GREEN='\e[32m'
 readonly COLOR_RED='\e[31m'
 readonly COLOR_RESET='\e[0m'
 
+
+# Write messages ($*) to STDERR. Colorize them by red.
 err() {
     local msg="$*"
     echo -e "${COLOR_RED}${msg}${COLOR_RESET}" >&2
     echo
 }
 
+
+# Write colorized $1 to STDOUT. Colorize them by green.
 ok() {
     local msg="$*"
     echo -e "${COLOR_GREEN}${msg}${COLOR_RESET}"
     echo
 }
 
-declare -a public_dns_servers web_servers
-public_dns_servers=('8.8.8.8' '208.67.222.123' '208.67.220.123')
-web_servers=('www.google.com' 'www.amazon.com' 'www.nic.cz')
 
-for ip in "${public_dns_servers[@]}"; do
-    echo "Trying to ping ${ip}..."
-    if ping -c 3 "${ip}"; then
-        ok "Reached ${ip}"
-        break
-    else
-        err "Failed to ping ${ip}"
-        traceroute "${ip}"
-    fi
-done
+# Main entry point
+main() {
+    local public_dns_servers web_servers
+    declare -a public_dns_servers web_servers
+    public_dns_servers=('8.8.8.8' '208.67.222.123' '208.67.220.123')
+    web_servers=('www.google.com' 'www.amazon.com' 'www.nic.cz')
 
-for server in "${web_servers[@]}"; do
-    echo "Sending HTTP request to ${server}..."
-    if curl -I "${server}"; then
-        ok "Got response from ${server}"
-        break
-    else
-        err "Failed to ping ${server}"
-    fi
-done
+    local ip
+    for ip in "${public_dns_servers[@]}"; do
+        echo "Trying to ping ${ip}..."
+        if ping -c 3 "${ip}"; then
+            ok "Reached ${ip}"
+            break
+        else
+            err "Failed to ping ${ip}"
+            traceroute "${ip}"
+        fi
+    done
+
+    local server
+    for server in "${web_servers[@]}"; do
+        echo "Sending HTTP request to ${server}..."
+        if curl -I "${server}"; then
+            ok "Got response from ${server}"
+            break
+        else
+            err "Failed to ping ${server}"
+        fi
+    done
+}
+
+
+main "${@}"
