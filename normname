@@ -34,7 +34,7 @@ main() {
         exit 1
     fi
 
-    local orig_path orig_dir orig_name
+    local orig_path orig_dir orig_name new_name
     for orig_path in "${@}"; do
         orig_dir=$(dirname "${orig_path}")
         orig_name=$(basename "${orig_path}")
