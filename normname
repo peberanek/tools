@@ -2,7 +2,8 @@
 #
 # Normalize file names.
 #
-# For the set of modifications see the function `normalize`.
+# Helps to obey naming conventions for files. For the full set of modifications
+# see the function `normalize`.
 #
 
 set -o errexit
