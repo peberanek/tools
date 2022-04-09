@@ -8,6 +8,10 @@
 
 set -o errexit
 
+help_msg="\
+usage:
+  ${0} FILE...
+"
 
 # Return normalized version of ${1}.
 #
@@ -29,9 +33,7 @@ normalize() {
 main() {
     if [[ ${#} -eq 0 ]]; then
         echo "error: missing files to operate on" >&2
-        echo
-        echo "usage:"
-        echo "  ${0} FILE... "
+        echo "${help_msg}" >&2
         exit 1
     fi
 
