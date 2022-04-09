@@ -19,9 +19,9 @@ normalize() {
     readonly DIACRITICS='ěščřžýáíéĚŠČŘŽÝÁÍÉ'
     readonly NO_DIACRITICS='escrzyaieESCRZYAIE'
     echo "${1}" \
+        | sed "y/${DIACRITICS}/${NO_DIACRITICS}/" \
         | tr '[:upper:]' '[:lower:]' \
-        | tr ' ' '_' \
-        | sed "y/${DIACRITICS}/${NO_DIACRITICS}/"
+        | tr ' ' '_'
 }
 
 
