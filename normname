@@ -50,6 +50,8 @@ main() {
             else
                 new_path="${orig_dir}/${new_name}"
             fi
+            # TODO: consider adding --no-clobber flag to prevent overwriting an
+            # existing file
             mv "${orig_path}" "${new_path}"
             echo "${orig_path} -> ${new_path}"
         fi
