@@ -8,7 +8,7 @@
 #
 
 type="(docs|feat|fix|perf|refactor|style|test|chore|revert)"
-scope="(fxrates|rpm-ostree-notify|testnetconn|normname)"
+scope="(fxrates|rpm-ostree-notify|testnetconn|normname|rbak)"
 
 if ! grep --quiet --extended-regexp "^${type}(\(${scope}\))?(\!)?: " "${1}" ; then
   echo "Conventional Commits validation failed."

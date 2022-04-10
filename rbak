@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+#
+# Make a simple backup of $HOME dir.
+#
+
+set -o errexit
+set -o nounset
+
+# FIXME: condition doesn't work
+#if [[ ! -v "${HOSTNAME}" ]] || [[ -z "${HOSTNAME}" ]]; then
+#    echo 'Error: $HOSTNAME variable is not set.'
+#    exit 1
+#fi
+#
+#exit 1
+
+src="${HOME}"
+source "/etc/os-release"
+if [[ "${ID}" == "debian" ]]; then
+    dest="/media/${USER}/backup/${HOSTNAME}"
+elif [[ "${ID}" == "fedora" ]]; then
+    dest="/run/media/${USER}/backup/${HOSTNAME}"
+else
+    echo 'error: unsupported OS distribution.' >&2
+    exit 1
+fi
+
+rsync \
+    --verbose \
+    --archive \
+    --human-readable \
+    --exclude-from="${HOME}/.rbak/exclude" \
+    --delete \
+    --delete-excluded \
+    "${src}" \
+    "${dest}/home"
