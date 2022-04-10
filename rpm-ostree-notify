@@ -5,7 +5,6 @@
 # Optionally, the script may initiate immediate system upgrade.
 #
 
-# shellcheck source=/dev/null
 source "$(dirname "${0}")/rpm-ostree-notify.conf"
 
 msg_summary='Security Advisories Available'
