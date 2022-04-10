@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+#
+# Make a backup of $HOME dir.
+#
+# Simply syncs content of $HOME dir with its destination dir via rsync.
+#
+# NOTE:
+#   Using $USER or $HOSTNAME for determining backup dir is wrong design as it
+#   may lead to unexpected behavior - user or hostname may change unexpectedly
+#   for some environments (e.g. toolbox).
+
+set -o errexit
+set -o nounset
+
+conf_dir="${HOME}/.config/rbak"
+
+# shellcheck source=/dev/null
+source "${conf_dir}/rbak.conf"
+
+src="${HOME}"
+
+echo "source dir: ${src}"
+echo "destination dir: ${DEST}"
+echo "running rsync..."
+echo
+
+rsync \
+    --verbose \
+    --archive \
+    --human-readable \
+    --exclude-from="${conf_dir}/exclude" \
+    --delete \
+    --delete-excluded \
+    "${src}" \
+    "${DEST}/home"
