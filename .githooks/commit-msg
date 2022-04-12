@@ -6,6 +6,8 @@
 #
 # Inspired by https://github.com/trezor/trezor-firmware/blob/master/COMMITS.md
 #
+# TODO: add available types and scopes to the default commit message (comments)?
+#
 
 type="(docs|feat|fix|perf|refactor|style|test|chore|revert)"
 scope="(fxrates|rpm-ostree-notify|testnetconn|normname|rbak)"

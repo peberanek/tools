@@ -2,6 +2,22 @@
 
 A collection of various command-line tools.
 
+## rbak
+
+Script for making a backup of $HOME dir via rsync. Simply syncs content of $HOME with its destination dir.
+
+Config files:
+
+* `~/.rbak/exclude`:
+
+    ```text
+    # Patterns excluded from rsync transfer. Replace <user> with your user name. For details
+    # see `man rsync`, section `INCLUDE/EXCLUDE PATTERN RULES`.
+    <user>/.cache
+    <user>/Downloads
+    <user>/.local/share/Trash
+    ```
+
 ## rpm-ostree-notify
 
 Config files:
