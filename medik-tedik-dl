@@ -12,8 +12,39 @@ examples:
     tedik-medik-dl 'http://www.medik-tedik.cz/index.php?foto=202201' 1
 """
 
+# NOTE: I would be nice to resolve abstract-method issue in the MedikTedikGalleryParser
+# pylint: disable=abstract-method
 
+from html.parser import HTMLParser
 import sys
+import urllib.request
+
+
+class MedikTedikGalleryParser(HTMLParser):
+    """Parse a gallery web page from medik-tedik.cz.
+
+    Due to invalid (likely handmade) markup it is difficult to parse it
+    by e.g. xml.etree.ElementTree.
+    """
+
+    in_gallery_div = False
+    gallery_content = {"date": "", "urls": []}
+
+    def handle_starttag(self, tag, attrs):
+        #print("Encountered a start tag:", tag, "attrs:", attrs)
+        if tag == "div":
+            if attrs and (attrs[0][0] == "class" and attrs[0][1] == "galerie"):
+                self.in_gallery_div = True
+            elif attrs and (attrs[0][0] == "id" and attrs[0][1] == "pata"):
+                self.in_gallery_div = False
+        if self.in_gallery_div and tag == "a" and attrs and (attrs[0][0] == "class" and attrs[0][1] == "cell"):
+            self.gallery_content["urls"].append(attrs[1][1])
+
+    # def handle_endtag(self, tag):
+    #     print("Encountered an end tag :", tag)
+
+    # def handle_data(self, data):
+    #     print("Encountered some data  :", data)
 
 
 def main():
@@ -24,6 +55,15 @@ def main():
 
     print(gallery_url, img_number)
 
+    with urllib.request.urlopen(gallery_url) as response:
+        html = response.read().decode("utf-8")
+
+    parser = MedikTedikGalleryParser()
+    parser.feed(html)
+    parser.close()
+
+    #print(parser.gallery_content)
+    print("images in gallery:", len(parser.gallery_content["urls"]))
 
 if __name__ == "__main__":
     main()
