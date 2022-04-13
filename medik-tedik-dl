@@ -95,7 +95,18 @@ def main():
         if num == img_number:
             print(num, url)
 
-            file = dest_dir / "tedik_medik_dl_test.jpg"
+            # Create image name in the form: topic_yyyymmdd_num.ext; topics (atletika, priroda, ostatni)
+            #topics = ('atletika', 'priroda', 'ostatni')
+            topic = re.search(r"fotogalerie/(atletika|priroda|ostatni)/\d{4}", url).group(1)
+            #print(topic)
+            if not topic:
+                print("Invalid topic in image URL:", url, file=sys.stderr)
+                sys.exit(1)
+            img_ext = os.path.splitext(url)[1]
+            date_str = parser.gallery_content["date"].replace("-", "")
+            img_name = f'{topic}_{date_str}_{img_number}{img_ext}'
+
+            file = dest_dir / img_name
             print("saving image as", file)
             with urllib.request.urlopen(url) as response:
                 file.write_bytes(response.read())
