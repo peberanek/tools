@@ -16,6 +16,8 @@ examples:
 # pylint: disable=abstract-method
 
 from html.parser import HTMLParser
+import os
+from pathlib import Path
 import re
 import sys
 import urllib.request
@@ -68,6 +70,8 @@ def main():
     if img_number < 1:
         print(f"Image numbers start from 1; entered: {img_number}", file=sys.stderr)
         sys.exit(1)
+    # NOTE: I would be nice to let user to select a different dir if needed.
+    dest_dir = Path(f'{os.getenv("HOME")}/Downloads')
 
     print(gallery_url, img_number)
 
@@ -90,6 +94,11 @@ def main():
     for num, url in enumerate(parser.gallery_content["urls"], start=1):
         if num == img_number:
             print(num, url)
+
+            file = dest_dir / "tedik_medik_dl_test.jpg"
+            print("saving image as", file)
+            with urllib.request.urlopen(url) as response:
+                file.write_bytes(response.read())
 
 
 if __name__ == "__main__":
