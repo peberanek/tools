@@ -1,9 +1,28 @@
-"""TODO: describe me!"""
+#!/usr/bin/env python3
+
+"""Easily download images from medik-tedik.cz.
+
+By default, images are downloaded into $HOME/Downloads.
+
+usage:
+    tedik-medik-dl gallery_url img_number
+
+examples:
+    # Download the first image from the first gallery of 2022:
+    tedik-medik-dl 'http://www.medik-tedik.cz/index.php?foto=202201' 1
+"""
+
+
+import sys
 
 
 def main():
     """Main entry point"""
-    print("Hello Python!")
+    # NOTE: I would be nice to read args using argparse
+    gallery_url = sys.argv[1]
+    img_number = sys.argv[2]
+
+    print(gallery_url, img_number)
 
 
 if __name__ == "__main__":
