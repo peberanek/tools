@@ -38,7 +38,7 @@ class MedikTedikGalleryParser(HTMLParser):
             elif attrs and (attrs[0][0] == "id" and attrs[0][1] == "pata"):
                 self.in_gallery_div = False
         if self.in_gallery_div and tag == "a" and attrs and (attrs[0][0] == "class" and attrs[0][1] == "cell"):
-            self.gallery_content["urls"].append(attrs[1][1])
+            self.gallery_content["urls"].append("http://www.medik-tedik.cz/" + attrs[1][1])
 
     # def handle_endtag(self, tag):
     #     print("Encountered an end tag :", tag)
