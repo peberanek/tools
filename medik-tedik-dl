@@ -16,6 +16,7 @@ examples:
 # pylint: disable=abstract-method
 
 from html.parser import HTMLParser
+import re
 import sys
 import urllib.request
 
@@ -27,16 +28,19 @@ class MedikTedikGalleryParser(HTMLParser):
     by e.g. xml.etree.ElementTree.
     """
 
+    in_date_div = False
     in_gallery_div = False
     gallery_content = {"date": "", "urls": []}
 
     def handle_starttag(self, tag, attrs):
         # print("Encountered a start tag:", tag, "attrs:", attrs)
-        if tag == "div":
-            if attrs and (attrs[0][0] == "class" and attrs[0][1] == "galerie"):
+        if tag == "div" and attrs:
+            if attrs[0][0] == "class" and attrs[0][1] == "galerie":
                 self.in_gallery_div = True
-            elif attrs and (attrs[0][0] == "id" and attrs[0][1] == "pata"):
+            elif attrs[0][0] == "id" and attrs[0][1] == "pata":
                 self.in_gallery_div = False
+            elif attrs[0][0] == "class" and attrs[0][1] == "rokh":
+                self.in_date_div = True
         if (
             self.in_gallery_div
             and tag == "a"
@@ -50,8 +54,10 @@ class MedikTedikGalleryParser(HTMLParser):
     # def handle_endtag(self, tag):
     #     print("Encountered an end tag :", tag)
 
-    # def handle_data(self, data):
-    #     print("Encountered some data  :", data)
+    def handle_data(self, data):
+        if self.in_date_div and re.match(r"^\d{4}-\d{2}-\d{2}$", data):
+            self.gallery_content["date"] = data
+            self.in_date_div = False
 
 
 def main():
@@ -70,6 +76,7 @@ def main():
     parser.close()
 
     # print(parser.gallery_content)
+    print(parser.gallery_content["date"])
     print("images in gallery:", len(parser.gallery_content["urls"]))
 
 
