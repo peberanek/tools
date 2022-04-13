@@ -1,0 +1,10 @@
+"""TODO: describe me!"""
+
+
+def main():
+    """Main entry point"""
+    print("Hello Python!")
+
+
+if __name__ == "__main__":
+    main()
