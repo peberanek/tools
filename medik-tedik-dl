@@ -31,14 +31,21 @@ class MedikTedikGalleryParser(HTMLParser):
     gallery_content = {"date": "", "urls": []}
 
     def handle_starttag(self, tag, attrs):
-        #print("Encountered a start tag:", tag, "attrs:", attrs)
+        # print("Encountered a start tag:", tag, "attrs:", attrs)
         if tag == "div":
             if attrs and (attrs[0][0] == "class" and attrs[0][1] == "galerie"):
                 self.in_gallery_div = True
             elif attrs and (attrs[0][0] == "id" and attrs[0][1] == "pata"):
                 self.in_gallery_div = False
-        if self.in_gallery_div and tag == "a" and attrs and (attrs[0][0] == "class" and attrs[0][1] == "cell"):
-            self.gallery_content["urls"].append("http://www.medik-tedik.cz/" + attrs[1][1])
+        if (
+            self.in_gallery_div
+            and tag == "a"
+            and attrs
+            and (attrs[0][0] == "class" and attrs[0][1] == "cell")
+        ):
+            self.gallery_content["urls"].append(
+                "http://www.medik-tedik.cz/" + attrs[1][1]
+            )
 
     # def handle_endtag(self, tag):
     #     print("Encountered an end tag :", tag)
@@ -62,8 +69,9 @@ def main():
     parser.feed(html)
     parser.close()
 
-    #print(parser.gallery_content)
+    # print(parser.gallery_content)
     print("images in gallery:", len(parser.gallery_content["urls"]))
+
 
 if __name__ == "__main__":
     main()
