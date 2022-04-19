@@ -4,11 +4,13 @@ A collection of various command-line tools.
 
 ## rbak
 
-Script for making a backup of $HOME dir via rsync. Simply syncs content of $HOME with its destination dir.
+Script for backing up $HOME dir via rsync. Simply syncs content of $HOME with its destination dir.
 
 Config files:
 
-* `~/.rbak/exclude`:
+* `~/.config/rbak/exclude`:
+
+    > Replace `<user>` with your user name.
 
     ```text
     # Patterns excluded from rsync transfer. Replace <user> with your user name. For details
@@ -16,6 +18,14 @@ Config files:
     <user>/.cache
     <user>/Downloads
     <user>/.local/share/Trash
+    ```
+
+* `~/.config/rbak/rbak.conf`:
+
+    > Add path to the destination dir to the `DEST=` key below. E.g. `DEST="/run/media/joe/usbdrive/backup_dir"`.
+
+    ```bash
+    DEST=FIXME
     ```
 
 ## rpm-ostree-notify
