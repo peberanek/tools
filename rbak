@@ -12,15 +12,17 @@
 set -o errexit
 set -o nounset
 
-src="${HOME}"
-dest="/run/media/petr/backup/hydrogen"
+conf_dir="${HOME}/.config/rbak"
+
+# shellcheck source=/dev/null
+source "${conf_dir}/rbak.conf"
 
 rsync \
     --verbose \
     --archive \
     --human-readable \
-    --exclude-from="${HOME}/.rbak/exclude" \
+    --exclude-from="${conf_dir}/exclude" \
     --delete \
     --delete-excluded \
-    "${src}" \
-    "${dest}/home"
+    "${HOME}" \
+    "${DEST}/home"
