@@ -17,6 +17,13 @@ conf_dir="${HOME}/.config/rbak"
 # shellcheck source=/dev/null
 source "${conf_dir}/rbak.conf"
 
+src="${HOME}"
+
+echo "source dir: ${src}"
+echo "destination dir: ${DEST}"
+echo "running rsync..."
+echo
+
 rsync \
     --verbose \
     --archive \
@@ -24,5 +31,5 @@ rsync \
     --exclude-from="${conf_dir}/exclude" \
     --delete \
     --delete-excluded \
-    "${HOME}" \
+    "${src}" \
     "${DEST}/home"
