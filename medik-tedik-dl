@@ -21,6 +21,7 @@ from pathlib import Path
 import re
 import sys
 import urllib.request
+import urllib.parse
 
 
 class MedikTedikGalleryParser(HTMLParser):
@@ -49,8 +50,10 @@ class MedikTedikGalleryParser(HTMLParser):
             and attrs
             and (attrs[0][0] == "class" and attrs[0][1] == "cell")
         ):
+            # A valid URL must not contain contain control characters, e.g. a whitespace.
+            # urllib.parse.quote should resolve this issue.
             self.gallery_content["urls"].append(
-                "http://www.medik-tedik.cz/" + attrs[1][1]
+                "http://www.medik-tedik.cz/" + urllib.parse.quote(attrs[1][1])
             )
 
     # def handle_endtag(self, tag):
