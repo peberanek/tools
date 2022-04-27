@@ -2,7 +2,7 @@
 #
 # Normalize file names.
 #
-# Helps to obey naming conventions for files. For the full set of modifications
+# Helps to keep simple naming conventions for files. For the full set of modifications
 # see the function `normalize`.
 #
 
