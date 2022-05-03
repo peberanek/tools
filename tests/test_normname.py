@@ -16,17 +16,40 @@ def files(tmp_path):
     """Provide test files with normalized and denormalized filename."""
     testdir = tmp_path / "normname"
     testdir.mkdir()
+
     filename_not_ok = testdir / "Incorrect Filename - ěščřžýáíéĚŠČŘŽÝÁÍÉ"
     filename_not_ok.touch()
+
     filename_ok = testdir / "correct_filename"
     filename_ok.touch()
+
     return (filename_not_ok, filename_ok)
+
+
+@pytest.fixture
+def files_with_conflicting_names(tmp_path):
+    """Provide test files with such names where normalization of the 1st file would override the 2nd file."""
+    testdir = tmp_path / "normname"
+    testdir.mkdir()
+
+    # caution: without calling Path.touch() method, `mv' command used in `normname' seem
+    # to ignore `--no-clobber' option.
+    filename_1 = testdir / "My File"
+    filename_1.touch()
+    filename_1.write_text("data 1")
+
+    filename_2 = testdir / "my_file"
+    filename_2.touch()
+    filename_2.write_text("data 2")
+
+    return (filename_1, filename_2)
 
 
 # pylint: disable=subprocess-run-check,redefined-outer-name
 # subprocess-run-check: Tests often make prog to exit with non-zero exit code, raising an error
 # is not necessary.
 # redefined-outer-name: Collides with the way pytest tests request fixtures
+
 
 def test_no_args():
     """Test prog without arguments.
@@ -59,7 +82,6 @@ def run_normname(file):
     return new_name
 
 
-
 def test_upper_case(files):
     """Test prog converts upper case to lower case."""
     assert not re.search(r"[A-Z]", run_normname(files[0]))
@@ -67,7 +89,7 @@ def test_upper_case(files):
 
 def test_whitespace(files):
     """Test prog replaces whitespaces with underscores."""
-    assert ' ' not in run_normname(files[0])
+    assert " " not in run_normname(files[0])
 
 
 def test_czech_diacritics(files):
@@ -83,3 +105,25 @@ def test_no_action_filename(files):
     assert proc.returncode == 0
     assert filename_ok.exists()  # file was NOT renamed
     assert proc.stdout.decode("utf-8") == ""
+
+
+def test_existing_file_is_not_overriden(files_with_conflicting_names):
+    """Test prog doesn't override an existing file with the same (normalized) name.
+
+    Imagine there are 2 files in the directory - 'My File' and 'my_file'. Make sure
+    prog doesn't override 'My File' as 'my_file' effecting loss of the original
+    'my_file'.
+    """
+    file_0 = files_with_conflicting_names[0]
+    file_0_data = file_0.read_text()
+    file_1 = files_with_conflicting_names[1]
+    file_1_data = file_1.read_text()
+
+    proc = subprocess.run([prog_path, file_0], capture_output=True)
+    assert proc.returncode == 2
+
+    # Verify files content wasn't modified
+    file_0.exists()
+    assert file_0.read_text() == file_0_data
+    file_1.exists()
+    assert file_1.read_text() == file_1_data

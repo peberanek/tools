@@ -2,7 +2,7 @@
 #
 # Normalize file names.
 #
-# Helps to obey naming conventions for files. For the full set of modifications
+# Helps to keep simple naming conventions for files. For the full set of modifications
 # see the function `normalize`.
 #
 
@@ -16,7 +16,8 @@ usage:
 # Return normalized version of ${1}.
 #
 # * Change uppercase to lowercase.
-# * Replace whitespaceses with underscores.
+# * Replace sequences of dashes, whitespaceses and underscores with a single
+#   underscore.
 # * Remove Czech diacritics.
 normalize() {
     local DIACRITICS NO_DIACRITICS
@@ -25,7 +26,7 @@ normalize() {
     echo "${1}" \
         | sed "y/${DIACRITICS}/${NO_DIACRITICS}/" \
         | tr '[:upper:]' '[:lower:]' \
-        | tr ' ' '_'
+        | tr --squeeze-repeats ' -' '_'
 }
 
 
@@ -50,10 +51,17 @@ main() {
             else
                 new_path="${orig_dir}/${new_name}"
             fi
-            # TODO: consider adding --no-clobber flag to prevent overwriting an
-            # existing file
-            mv "${orig_path}" "${new_path}"
-            echo "${orig_path} -> ${new_path}"
+            local output
+            output=$(mv --verbose --no-clobber "${orig_path}" "${new_path}")
+            # Surprisingly, `--no-clobber' option doesn't change exit status if
+            # `new_path' already exists. It is silently skipped and in the
+            # `--verbose' mode there is no output.
+            if [[ ! "${output}" ]]; then
+                echo "error: normalization of '${orig_path}' would override existing file '${new_path}'" >&2
+                exit 2
+            else
+                echo "${orig_path} -> ${new_path}"
+            fi
         fi
     done
 }
