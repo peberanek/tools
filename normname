@@ -51,10 +51,17 @@ main() {
             else
                 new_path="${orig_dir}/${new_name}"
             fi
-            # TODO: consider adding --no-clobber flag to prevent overwriting an
-            # existing file
-            mv "${orig_path}" "${new_path}"
-            echo "${orig_path} -> ${new_path}"
+            local output
+            output=$(mv --verbose --no-clobber "${orig_path}" "${new_path}")
+            # Surprisingly, `--no-clobber' option doesn't change exit status if
+            # `new_path' already exists. It is silently skipped and in the
+            # `--verbose' mode there is no output.
+            if [[ ! "${output}" ]]; then
+                echo "error: normalization of '${orig_path}' would override existing file '${new_path}'" >&2
+                exit 2
+            else
+                echo "${orig_path} -> ${new_path}"
+            fi
         fi
     done
 }
