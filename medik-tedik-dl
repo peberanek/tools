@@ -16,13 +16,13 @@ examples:
 # pylint: disable=abstract-method
 
 import argparse
-from html.parser import HTMLParser
 import os
-from pathlib import Path
 import re
 import sys
-import urllib.request
 import urllib.parse
+import urllib.request
+from html.parser import HTMLParser
+from pathlib import Path
 
 
 class MedikTedikGalleryParser(HTMLParser):
@@ -70,14 +70,27 @@ def main():
     """Main entry point"""
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("-u", "--gallery-url", help="full gallery URL, e.g. http://www.medik-tedik.cz/index.php?foto=202201")
-    parser.add_argument("-n", "--img-number", help="number of the requested image, e.g. 1", type=int)
-    parser.add_argument("-d", "--dest-dir", help="optional destination directory where to save images, default: ~/Downloads", nargs="?")
+    parser.add_argument(
+        "-u",
+        "--gallery-url",
+        help="full gallery URL, e.g. http://www.medik-tedik.cz/index.php?foto=202201",
+    )
+    parser.add_argument(
+        "-n", "--img-number", help="number of the requested image, e.g. 1", type=int
+    )
+    parser.add_argument(
+        "-d",
+        "--dest-dir",
+        help="optional destination directory where to save images, default: ~/Downloads",
+        nargs="?",
+    )
     args = parser.parse_args()
 
     gallery_id = args.gallery_url.split("?foto=")[-1]
     if args.img_number < 1:
-        print(f"Image numbers start from 1; entered: {args.img_number}", file=sys.stderr)
+        print(
+            f"Image numbers start from 1; entered: {args.img_number}", file=sys.stderr
+        )
         sys.exit(1)
     if not args.dest_dir:
         dest_dir = Path(f'{os.getenv("HOME")}/Downloads')
@@ -105,20 +118,25 @@ def main():
 
     num_images_in_gallery = len(parser.gallery_content["urls"])
     if args.img_number > num_images_in_gallery:
-        print(f"Image number out of range; images in the gallery: {num_images_in_gallery}", file=sys.stderr)
+        print(
+            f"Image number out of range; images in the gallery: {num_images_in_gallery}",
+            file=sys.stderr,
+        )
         sys.exit(1)
 
     for num, url in enumerate(parser.gallery_content["urls"], start=1):
         if num == args.img_number:
             print(num, url)
 
-            topic = re.search(r"fotogalerie/(atletika|priroda|ostatni)/\d{4}", url).group(1)
+            topic = re.search(
+                r"fotogalerie/(atletika|priroda|ostatni)/\d{4}", url
+            ).group(1)
             if not topic:
                 print("Invalid topic in image URL:", url, file=sys.stderr)
                 sys.exit(1)
             img_ext = os.path.splitext(url)[1]
             date_str = parser.gallery_content["date"].replace("-", "")
-            img_name = f'{date_str}_{gallery_id}_{args.img_number:03}{img_ext}'
+            img_name = f"{date_str}_{gallery_id}_{args.img_number:03}{img_ext}"
 
             topic_dir = dest_dir / topic
             topic_dir.mkdir(exist_ok=True)
