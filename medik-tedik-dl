@@ -111,9 +111,11 @@ def main():
             date_str = parser.gallery_content["date"].replace("-", "")
             # ideal filename: destdir/topicdir/date_galleryid_imgnum.imgext
             #           e.g.: ~/Downloads/medik_tedik_cz/atletika/20200731_202001_001.jpg
-            img_name = f'{topic}_{date_str}_{gallery_id}_{img_number:03}{img_ext}'
+            img_name = f'{date_str}_{gallery_id}_{img_number:03}{img_ext}'
 
-            file = dest_dir / img_name
+            topic_dir = dest_dir / topic
+            topic_dir.mkdir(exist_ok=True)
+            file = topic_dir / img_name
             print("saving image as", file)
             with urllib.request.urlopen(url) as response:
                 file.write_bytes(response.read())
