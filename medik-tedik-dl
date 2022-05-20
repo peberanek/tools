@@ -15,6 +15,7 @@ examples:
 # NOTE: I would be nice to resolve abstract-method issue in the MedikTedikGalleryParser
 # pylint: disable=abstract-method
 
+import argparse
 from html.parser import HTMLParser
 import os
 from pathlib import Path
@@ -67,19 +68,31 @@ class MedikTedikGalleryParser(HTMLParser):
 
 def main():
     """Main entry point"""
-    # NOTE: I would be nice to read args using argparse
-    gallery_url = sys.argv[1]
-    gallery_id = gallery_url.split("?foto=")[-1]
-    img_number = int(sys.argv[2])
-    if img_number < 1:
-        print(f"Image numbers start from 1; entered: {img_number}", file=sys.stderr)
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-u", "--gallery-url", help="full gallery URL, e.g. http://www.medik-tedik.cz/index.php?foto=202201")
+    parser.add_argument("-n", "--img-number", help="number of the requested image, e.g. 1", type=int)
+    parser.add_argument("-d", "--dest-dir", help="optional destination directory where to save images, default: ~/Downloads", nargs="?")
+    args = parser.parse_args()
+
+    gallery_id = args.gallery_url.split("?foto=")[-1]
+    if args.img_number < 1:
+        print(f"Image numbers start from 1; entered: {args.img_number}", file=sys.stderr)
         sys.exit(1)
-    # NOTE: I would be nice to let user to select a different dir if needed.
-    dest_dir = Path(f'{os.getenv("HOME")}/Downloads')
+    if not args.dest_dir:
+        dest_dir = Path(f'{os.getenv("HOME")}/Downloads')
+    else:
+        dest_dir = Path(args.dest_dir)
+    if not dest_dir.exists():
+        print(
+            f"error: destination directory (-d, --dest-dir) '{dest_dir}' does not exist.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
 
-    print(gallery_url, img_number)
+    print(args.gallery_url, args.img_number, dest_dir)
 
-    with urllib.request.urlopen(gallery_url) as response:
+    with urllib.request.urlopen(args.gallery_url) as response:
         html = response.read().decode("utf-8")
 
     parser = MedikTedikGalleryParser()
@@ -91,27 +104,21 @@ def main():
     print("images in gallery:", len(parser.gallery_content["urls"]))
 
     num_images_in_gallery = len(parser.gallery_content["urls"])
-    if img_number > num_images_in_gallery:
+    if args.img_number > num_images_in_gallery:
         print(f"Image number out of range; images in the gallery: {num_images_in_gallery}", file=sys.stderr)
         sys.exit(1)
 
     for num, url in enumerate(parser.gallery_content["urls"], start=1):
-        if num == img_number:
+        if num == args.img_number:
             print(num, url)
 
-            # Create image name in the form: topic_yyyymmdd_num.ext; topics (atletika, priroda, ostatni)
-            #topics = ('atletika', 'priroda', 'ostatni')
-            # NOTE: Is it better to save pictures from different topics into different dirs?
             topic = re.search(r"fotogalerie/(atletika|priroda|ostatni)/\d{4}", url).group(1)
-            #print(topic)
             if not topic:
                 print("Invalid topic in image URL:", url, file=sys.stderr)
                 sys.exit(1)
             img_ext = os.path.splitext(url)[1]
             date_str = parser.gallery_content["date"].replace("-", "")
-            # ideal filename: destdir/topicdir/date_galleryid_imgnum.imgext
-            #           e.g.: ~/Downloads/medik_tedik_cz/atletika/20200731_202001_001.jpg
-            img_name = f'{date_str}_{gallery_id}_{img_number:03}{img_ext}'
+            img_name = f'{date_str}_{gallery_id}_{args.img_number:03}{img_ext}'
 
             topic_dir = dest_dir / topic
             topic_dir.mkdir(exist_ok=True)
