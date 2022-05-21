@@ -12,12 +12,12 @@ For usage details, see `medik-tedik-dl --help`.
 
 import argparse
 import os
+import pathlib
 import re
 import sys
 import urllib.parse
 import urllib.request
 from html.parser import HTMLParser
-from pathlib import Path
 
 
 class MedikTedikGalleryParser(HTMLParser):
@@ -72,6 +72,8 @@ def main():
         "-d",
         "--dest-dir",
         help="optional destination directory where to save images, default: ~/Downloads",
+        type=pathlib.Path,
+        default=f"{os.getenv('HOME')}/Downloads"
     )
     parser.add_argument(
         "-v",
@@ -87,19 +89,15 @@ def main():
             f"Image numbers start from 1; entered: {args.img_number}", file=sys.stderr
         )
         sys.exit(1)
-    if not args.dest_dir:
-        dest_dir = Path(f'{os.getenv("HOME")}/Downloads')
-    else:
-        dest_dir = Path(args.dest_dir)
-    if not dest_dir.exists():
+    if not args.dest_dir.exists():
         print(
-            f"error: destination directory (-d, --dest-dir) '{dest_dir}' does not exist.",
+            f"error: destination directory (-d, --dest-dir) '{args.dest_dir}' does not exist.",
             file=sys.stderr,
         )
         sys.exit(1)
 
     if args.verbose:
-        print("destination directory:", dest_dir)
+        print("destination directory:", args.dest_dir)
 
     with urllib.request.urlopen(args.gallery_url) as response:
         html = response.read().decode("utf-8")
@@ -127,7 +125,7 @@ def main():
             img_ext = os.path.splitext(url)[1]
             date_str = parser.gallery_content["date"].replace("-", "")
             img_name = f"{date_str}_{gallery_id}_{args.img_number:03}{img_ext}"
-            topic_dir = dest_dir / topic
+            topic_dir = args.dest_dir / topic
             topic_dir.mkdir(exist_ok=True)
             file = topic_dir / img_name
 
