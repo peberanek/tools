@@ -4,12 +4,7 @@
 
 By default, images are downloaded into $HOME/Downloads.
 
-usage:
-    tedik-medik-dl gallery_url img_number
-
-examples:
-    # Download the first image from the first gallery of 2022:
-    tedik-medik-dl 'http://www.medik-tedik.cz/index.php?foto=202201' 1
+For usage details, see `medik-tedik-dl --help`.
 """
 
 # NOTE: I would be nice to resolve abstract-method issue in the MedikTedikGalleryParser
@@ -71,18 +66,16 @@ def main():
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "-u",
-        "--gallery-url",
+        "gallery_url",
         help="full gallery URL, e.g. http://www.medik-tedik.cz/index.php?foto=202201",
     )
     parser.add_argument(
-        "-n", "--img-number", help="number of the requested image, e.g. 1", type=int
+        "img_number", help="number of the requested image, e.g. 1", type=int
     )
     parser.add_argument(
         "-d",
         "--dest-dir",
         help="optional destination directory where to save images, default: ~/Downloads",
-        nargs="?",
     )
     args = parser.parse_args()
 
