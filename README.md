@@ -1,10 +1,22 @@
 # Tools
 
-A collection of various command-line tools.
+Collection of various command-line tools.
+
+## fxrates
+
+Get foreign market exchange rates (declared by the Czech National Bank) to the command-line.
+
+## medik-tedik-dl
+
+Download images from [medik-tedik.cz](http://www.medik-tedik.cz/) with ease.
+
+## normname
+
+Helps to keep naming conventions for files (e.g. no whitespaces, lowercase only).
 
 ## rbak
 
-Script for backing up $HOME dir via rsync. Simply syncs content of $HOME with its destination dir.
+Backup $HOME dir via rsync. Simply syncs the content of $HOME with a destination dir.
 
 Config files:
 
@@ -29,6 +41,8 @@ Config files:
     ```
 
 ## rpm-ostree-notify
+
+[`rpm-ostree`](https://coreos.github.io/rpm-ostree/) is a great tool providing automatic upgrades of my Fedora Silverblue workstation. However, the tool doesn't notify me when the pending upgrade contains security fixes. This means I may work whole the day on unpached system. `rpm-ostree-notify` sends me a desktop notification when security fixes are ready to be applied.
 
 Config files:
 
