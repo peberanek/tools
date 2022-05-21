@@ -57,6 +57,11 @@ class MedikTedikGalleryParser(HTMLParser):
             self.in_date_div = False
 
 
+def error(msg):
+    """Format and print msg into STDERR."""
+    print(f"error: {msg}", file=sys.stderr)
+
+
 def main():
     """Main entry point"""
 
@@ -84,15 +89,10 @@ def main():
     args = parser.parse_args()
 
     if args.img_number < 1:
-        print(
-            f"Image numbers start from 1; entered: {args.img_number}", file=sys.stderr
-        )
+        error(f"image numbers start from 1; entered: {args.img_number}")
         sys.exit(1)
     if not args.dest_dir.exists():
-        print(
-            f"error: destination directory (-d, --dest-dir) '{args.dest_dir}' does not exist.",
-            file=sys.stderr,
-        )
+        error(f"--dest-dir '{args.dest_dir}' does not exist.")
         sys.exit(1)
 
     if args.verbose:
@@ -107,9 +107,9 @@ def main():
 
     num_images_in_gallery = len(parser.gallery_content["urls"])
     if args.img_number > num_images_in_gallery:
-        print(
-            f"Image number out of range; images in the gallery: {num_images_in_gallery}",
-            file=sys.stderr,
+        error(
+            f"image number out of range; images in the gallery: {num_images_in_gallery};"
+            " invalid URL?"
         )
         sys.exit(1)
 
@@ -119,13 +119,13 @@ def main():
                 r"fotogalerie/(atletika|priroda|ostatni)/\d{4}", url
             ).group(1)
             if not topic:
-                print("Invalid topic in image URL:", url, file=sys.stderr)
+                error(f"invalid topic in image URL: {url}")
                 sys.exit(1)
             img_ext = os.path.splitext(url)[1]
             date_str = parser.gallery_content["date"].replace("-", "")
             gallery_id = re.search(r"\?foto=(?P<id>\d*$)", args.gallery_url).group("id")
             if not gallery_id:
-                print("Cannot determine gallery ID for url:", url, file=sys.stderr)
+                error(f"cannot determine gallery ID for url: {url}")
                 sys.exit(1)
             img_name = f"{date_str}_{gallery_id}_{args.img_number:03}{img_ext}"
             topic_dir = args.dest_dir / topic
