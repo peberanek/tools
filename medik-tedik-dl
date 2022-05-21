@@ -73,6 +73,12 @@ def main():
         "--dest-dir",
         help="optional destination directory where to save images, default: ~/Downloads",
     )
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        help="print more verbose output; useful for debugging",
+        action="store_true",
+    )
     args = parser.parse_args()
 
     gallery_id = args.gallery_url.split("?foto=")[-1]
@@ -92,7 +98,8 @@ def main():
         )
         sys.exit(1)
 
-    print(args.gallery_url, args.img_number, dest_dir)
+    if args.verbose:
+        print("destination directory:", dest_dir)
 
     with urllib.request.urlopen(args.gallery_url) as response:
         html = response.read().decode("utf-8")
@@ -100,9 +107,6 @@ def main():
     parser = MedikTedikGalleryParser()
     parser.feed(html)
     parser.close()
-
-    print(parser.gallery_content["date"])
-    print("images in gallery:", len(parser.gallery_content["urls"]))
 
     num_images_in_gallery = len(parser.gallery_content["urls"])
     if args.img_number > num_images_in_gallery:
@@ -114,8 +118,6 @@ def main():
 
     for num, url in enumerate(parser.gallery_content["urls"], start=1):
         if num == args.img_number:
-            print(num, url)
-
             topic = re.search(
                 r"fotogalerie/(atletika|priroda|ostatni)/\d{4}", url
             ).group(1)
@@ -125,11 +127,12 @@ def main():
             img_ext = os.path.splitext(url)[1]
             date_str = parser.gallery_content["date"].replace("-", "")
             img_name = f"{date_str}_{gallery_id}_{args.img_number:03}{img_ext}"
-
             topic_dir = dest_dir / topic
             topic_dir.mkdir(exist_ok=True)
             file = topic_dir / img_name
-            print("saving image as", file)
+
+            if args.verbose:
+                print("saving image as:", file)
             with urllib.request.urlopen(url) as response:
                 file.write_bytes(response.read())
 
