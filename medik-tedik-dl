@@ -83,7 +83,6 @@ def main():
     )
     args = parser.parse_args()
 
-    gallery_id = args.gallery_url.split("?foto=")[-1]
     if args.img_number < 1:
         print(
             f"Image numbers start from 1; entered: {args.img_number}", file=sys.stderr
@@ -124,6 +123,10 @@ def main():
                 sys.exit(1)
             img_ext = os.path.splitext(url)[1]
             date_str = parser.gallery_content["date"].replace("-", "")
+            gallery_id = re.search(r"\?foto=(?P<id>\d*$)", args.gallery_url).group("id")
+            if not gallery_id:
+                print("Cannot determine gallery ID for url:", url, file=sys.stderr)
+                sys.exit(1)
             img_name = f"{date_str}_{gallery_id}_{args.img_number:03}{img_ext}"
             topic_dir = args.dest_dir / topic
             topic_dir.mkdir(exist_ok=True)
