@@ -137,6 +137,8 @@ def main():
             with urllib.request.urlopen(url) as response:
                 file.write_bytes(response.read())
 
+            break
+
 
 if __name__ == "__main__":
     main()
