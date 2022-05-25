@@ -27,9 +27,11 @@ class MedikTedikGalleryParser(HTMLParser):
     by e.g. xml.etree.ElementTree.
     """
 
-    in_date_div = False
-    in_gallery_div = False
-    gallery_content = {"date": "", "urls": []}
+    def __init__(self, *, convert_charrefs: bool = ...) -> None:
+        super().__init__(convert_charrefs=convert_charrefs)
+        self.in_date_div = False
+        self.in_gallery_div = False
+        self.gallery_content = {"date": "", "urls": []}
 
     def handle_starttag(self, tag, attrs):
         if tag == "div" and attrs:
