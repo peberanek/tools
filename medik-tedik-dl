@@ -7,9 +7,6 @@ By default, images are downloaded into $HOME/Downloads.
 For usage details, see `medik-tedik-dl --help`.
 """
 
-# NOTE: I would be nice to resolve abstract-method issue in the MedikTedikGalleryParser
-# pylint: disable=abstract-method
-
 import argparse
 import os
 import pathlib
@@ -18,6 +15,10 @@ import sys
 import urllib.parse
 import urllib.request
 from html.parser import HTMLParser
+
+# HTMLParser: Abstract method _markupbase.ParserBase.error() has been removed in
+# Python 3.10.
+# pylint: disable=abstract-method
 
 
 class MedikTedikGalleryParser(HTMLParser):
