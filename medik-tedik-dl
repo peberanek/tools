@@ -81,7 +81,7 @@ def main():
         "--dest-dir",
         help="optional destination directory where to save images, default: ~/Downloads",
         type=pathlib.Path,
-        default=f"{os.getenv('HOME')}/Downloads"
+        default=f"{os.getenv('HOME')}/Downloads",
     )
     parser.add_argument(
         "-v",
