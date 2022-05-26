@@ -14,8 +14,9 @@ import pytest  # pylint: disable=import-error
 
 working_dir: str = os.path.dirname(os.path.realpath(__file__))
 prog_path: str = f"{working_dir}/../fxrates"
+data_dir: str = f"{working_dir}/data/fxrates"
+sample_fxrates = f"{data_dir}/daily.txt"
 decimal = re.compile(r"\d+\.\d{3}")
-sample_fxrates = f"{working_dir}/daily.txt"
 
 # Tests often make prog to exit with non-zero exit code, raising an error
 # is not necessary.
