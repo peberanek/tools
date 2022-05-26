@@ -151,9 +151,10 @@ def main():
     # print FX rate
     #
 
-    default_url = "https://www.cnb.cz/en/financial-markets/foreign-exchange-market/central-bank-exchange-rate-fixing/central-bank-exchange-rate-fixing/daily.txt"  # pylint: disable=line-too-long
-    custom_url = os.getenv("FXRATES_URL")
-    url = custom_url if custom_url else default_url
+    url = os.getenv(
+        "FXRATES_URL",
+        default="https://www.cnb.cz/en/financial-markets/foreign-exchange-market/central-bank-exchange-rate-fixing/central-bank-exchange-rate-fixing/daily.txt",  # pylint: disable=line-too-long
+    )
     if args.date:
         # add URL query '?date=DD.MM.YYYY'
         url += f"?date={date.fromisoformat(args.date).strftime('%d.%m.%Y')}"

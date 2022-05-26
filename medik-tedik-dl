@@ -68,28 +68,28 @@ def error(msg):
 def main():
     """Main entry point"""
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
+    argparser = argparse.ArgumentParser()
+    argparser.add_argument(
         "gallery_url",
         help="full gallery URL, e.g. http://www.medik-tedik.cz/index.php?foto=202201",
     )
-    parser.add_argument(
+    argparser.add_argument(
         "img_number", help="number of the requested image, e.g. 1", type=int
     )
-    parser.add_argument(
+    argparser.add_argument(
         "-d",
         "--dest-dir",
         help="optional destination directory where to save images, default: ~/Downloads",
         type=pathlib.Path,
         default=f"{os.getenv('HOME')}/Downloads",
     )
-    parser.add_argument(
+    argparser.add_argument(
         "-v",
         "--verbose",
         help="print more verbose output; useful for debugging",
         action="store_true",
     )
-    args = parser.parse_args()
+    args = argparser.parse_args()
 
     if args.img_number < 1:
         error(f"image numbers start from 1; entered: {args.img_number}")
@@ -104,11 +104,11 @@ def main():
     with urllib.request.urlopen(args.gallery_url) as response:
         html = response.read().decode("utf-8")
 
-    parser = MedikTedikGalleryParser()
-    parser.feed(html)
-    parser.close()
+    webparser = MedikTedikGalleryParser()
+    webparser.feed(html)
+    webparser.close()
 
-    num_images_in_gallery = len(parser.gallery_content["urls"])
+    num_images_in_gallery = len(webparser.gallery_content["urls"])
     if args.img_number > num_images_in_gallery:
         error(
             f"image number out of range; images in the gallery: {num_images_in_gallery};"
@@ -116,7 +116,7 @@ def main():
         )
         sys.exit(1)
 
-    for num, url in enumerate(parser.gallery_content["urls"], start=1):
+    for num, url in enumerate(webparser.gallery_content["urls"], start=1):
         if num == args.img_number:
             topic = re.search(
                 r"fotogalerie/(atletika|priroda|ostatni)/\d{4}", url
@@ -125,7 +125,7 @@ def main():
                 error(f"invalid topic in image URL: {url}")
                 sys.exit(1)
             img_ext = os.path.splitext(url)[1]
-            date_str = parser.gallery_content["date"].replace("-", "")
+            date_str = webparser.gallery_content["date"].replace("-", "")
             gallery_id = re.search(r"\?foto=(?P<id>\d*$)", args.gallery_url).group("id")
             if not gallery_id:
                 error(f"cannot determine gallery ID for url: {url}")
