@@ -1,6 +1,6 @@
 # Tools
 
-Collection of various command-line tools.
+Collection of various command-line tools. Used and tested on [Fedora 36 Silverblue](https://silverblue.fedoraproject.org/).
 
 ## fxrates
 
