@@ -1,0 +1,110 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 5.01 Transitional//EN">
+<!--LAYOUT-->
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="styly/styl.css">    
+    <link rel="stylesheet" href="lightbox/dist/css/lightbox.css" type="text/css" media="screen" />
+</head>
+<body>  
+<!--  hlava  //-->
+
+    <div id="hlava">
+          <!--    <div class="nadpis"><a href="index.php">FOTOGALERIE Martina a Tomáše Edlmana</a></div>  //-->
+        <div class="podimg">
+            <a href="index.php"><img class="podimg1" src="fotogalerie/doma/nadpis.png" /></a>
+        </div>
+
+<div class="menu">
+        <div class="podnadpis">
+            <a href="https://www.instagram.com/mediktedik/"><img class="icon" src="fotogalerie/doma/insta.png" /></a>
+            <a href="https://www.facebook.com/Medík-Tedík-246185182109993/"><img class="icon" src="fotogalerie/doma/face.png" /></a>
+
+        </div>
+        
+            <a class="menu1" href="index.php?stranka=fotogalerie&kategorie=ostatni&rok=2020"><li>|OSTATNÍ|</li></a>
+            <a class="menu1" href="index.php?stranka=fotogalerie&kategorie=priroda&rok=2018"><li>|PŘÍRODA|</li></a>
+            <a class="menu1" href="index.php?stranka=fotogalerie&kategorie=atletika&rok=2022"><li>|ATLETIKA|</li></a>
+            <!--<a class="menu1" href="index.php?foto=2017"><li>|FOTOBANKA|</li></a>
+             <!-- <a class="menu1" href="index.php?stranka=fotogalerie&kategorie=ostatni&rok=2019"><li>| Ostatní</li></a>
+            <a class="menu1" href="index.php?stranka=fotogalerie&kategorie=priroda&rok=2018"><li>| Příroda</li></a>
+            <a class="menu1" href="index.php?stranka=fotogalerie&kategorie=atletika&rok=2021"><li>| Atletika</li></a>
+            <a class="menu1" href="index.php?foto=201700"><li>| Portfolio</li></a>
+            <a class="menu1 menu2" href="index.php?stranka=doma"><li>| Úvod</li></a>//-->
+        </div>       
+    </div>
+<hr />
+
+<!--  obsah  //-->         
+           <div id="obsah">
+        <div id="obsah">
+<div class="text">
+    <div class="zde">
+
+           <!-- <img class="zde1" src="fotogalerie/doma/zde.jpg" /> //-->
+
+    </div>
+    <div class="text1">
+                <div class="nazevd">.....</div>
+                <div class="nazev">MČRJ v hale - sobota</div>
+            <div class="pozn">Ostrava, Tomáš,2022</div>
+            <div class="kursord"></div>
+            <div class="kursor">
+                <div class="rokd"> ☼ </div>
+                <div class="rok1"><a href="index.php?stranka=fotogalerie&kategorie=atletika&rok=2022"> ▲ </div>
+                <div class="rokd"> ☼ </div>
+                <div class="rok2"><a href="index.php?foto=202201"> ◄ </a></div>
+                <div class="rokh"><a href="index.php?foto=202201">2022-02-19</a></div>
+                <div class="rok3"><a href="index.php?foto=202202"> ► </a></div>
+            </div>
+            <div class="kursord"></div>
+    </div>
+    <div class="zde">
+        
+           <!-- <img class="zde1" src="fotogalerie/doma/zde.jpg" /> //-->
+ 
+    </div>
+</div>
+<div class="galerie">
+    <div class="galerie">
+        <a class="cell" href="fotogalerie/atletika/2022/202201/b74a1489.jpg" data-lightbox="example-set">
+            <img class="center" src="fotogalerie/atletika/2022/202201/b74a1489_n.jpg" alt="">
+        </a>
+        </td>
+        <a class="cell" href="fotogalerie/atletika/2022/202201/b74a1708.jpg" data-lightbox="example-set">
+            <img class="center" src="fotogalerie/atletika/2022/202201/b74a1708_n.jpg" alt="">
+        </a>
+        </td>
+        <a class="cell" href="fotogalerie/atletika/2022/202201/b74a1936.jpg" data-lightbox="example-set">
+            <img class="center" src="fotogalerie/atletika/2022/202201/b74a1936_n.jpg" alt="">
+        </a>
+        </td>
+    </div>
+    <script src="lightbox/dist/js/lightbox-plus-jquery.js"></script>
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+  
+           </div>
+<hr />
+<!--  patka  //-->          
+    <div id="pata">
+ 
+        <div class="podimg">
+            <a href="index.php"><img class="podimg1 patimg1" src="fotogalerie/doma/pata.png" /></a>
+        </div>
+
+    </div>
+</body>
+</html>
+

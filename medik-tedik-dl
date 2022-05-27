@@ -50,9 +50,7 @@ class MedikTedikGalleryParser(HTMLParser):
         ):
             # A valid URL must not contain contain control characters, e.g. a whitespace.
             # urllib.parse.quote should resolve this issue.
-            self.gallery_content["urls"].append(
-                "http://www.medik-tedik.cz/" + urllib.parse.quote(attrs[1][1])
-            )
+            self.gallery_content["urls"].append(urllib.parse.quote(attrs[1][1]))
 
     def handle_data(self, data):
         if self.in_date_div and re.match(r"^\d{4}-\d{2}-\d{2}$", data):
@@ -116,7 +114,11 @@ def main():
         )
         sys.exit(1)
 
+    content_location = os.getenv(
+        "TEDIK_MEDIK_DL_CONTENT_LOCATION", default="http://www.medik-tedik.cz/"
+    )
     for num, url in enumerate(webparser.gallery_content["urls"], start=1):
+        url = content_location + url
         if num == args.img_number:
             topic = re.search(
                 r"fotogalerie/(atletika|priroda|ostatni)/\d{4}", url
