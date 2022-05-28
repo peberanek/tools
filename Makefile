@@ -35,5 +35,16 @@ pystyle: ## run Python code formatters
 	@echo [ISORT]
 	@isort --profile black $(PY_FILES)
 
+
+#
+## misc commands:
+#
+
+.PHONY: venv
+venv: VENV_DIR = venv
+venv: ## create Python virtual environment
+	python3 -m venv --clear --upgrade-deps $(VENV_DIR)
+	source $(VENV_DIR)/bin/activate && python3 -m pip install -r venv_requirements.txt
+
 show_py_files:
 	echo $(PY_FILES)
