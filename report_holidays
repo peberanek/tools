@@ -1,0 +1,37 @@
+#!/usr/bin/env python3
+"""Find and print holidays in the next 7 days, including today."""
+
+from datetime import date, timedelta
+
+# imported via venv or as a user-specific pkg (`pip install --user ...`)
+import holidays  # pylint: disable=import-error
+
+
+def main():
+    """Main entry point"""
+    watchlist = [
+        holidays.CZ(),
+        holidays.UK(),
+        holidays.US(),
+        holidays.AU(),  # Australia
+        holidays.JP(),
+    ]
+
+    found_holiday = False
+    for country_holidays in watchlist:
+        # Find and report holidays in the ongoing week (7 days), including today
+        days = 7
+        for day in range(days + 1):
+            date_in_question = date.today() + timedelta(days=day)
+            if date_in_question in country_holidays:
+                found_holiday = True
+                print(
+                    f"{date_in_question} is holiday in {country_holidays.country}:",
+                    country_holidays.get(date_in_question),
+                )
+    if not found_holiday:
+        print(f"No holiday in next {days} days.")
+
+
+if __name__ == "__main__":
+    main()

@@ -10,6 +10,11 @@ set -o errexit
 main() {
     echo
     cal
+
+    echo "Ongoing holidays:"
+    ./report_holidays || report_holidays
+    echo
+
     date '+%T %Z'
     date --utc '+%T %Z'
     echo
