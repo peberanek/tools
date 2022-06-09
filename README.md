@@ -2,6 +2,10 @@
 
 Collection of various command-line tools. Used and tested on [Fedora 36 Silverblue](https://silverblue.fedoraproject.org/).
 
+## trading_prep
+
+Print basic info for quick orientation in the actual trading day.
+
 ## fxrates
 
 Get foreign market exchange rates (declared by the Czech National Bank) to the command-line.

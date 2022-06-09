@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+#
+# Print basic info for better orientation in ongoing trading sessions.
+#
+
+set -o errexit
+
+
+# Main entry point
+main() {
+    echo
+    cal
+    date '+%T %Z'
+    date --utc '+%T %Z'
+    echo
+
+    # TRADING SESSIONS
+    #
+    # Source: https://www.investopedia.com/terms/t/tradingsession.asp
+    #
+    # The regular trading session for U.S. stocks starts at 9:30 a.m. and ends
+    # at 4:00 p.m. Eastern Time (ET) on weekdays (holidays excepted). These
+    # times are primarily driven by the working hours of the New York Stock
+    # Exchange (NYSE), which closes early at 1:00 p.m. ET on several occasions
+    # throughout the year associated with holidays.
+    #
+    # The regular weekday trading session for the U.S. bond market is 8:00 a.m.
+    # to 5:00 p.m. ET.3 Futures markets, meanwhile, have different trading
+    # hours, depending upon the exchange and the type of commodity being
+    # traded.
+
+    echo 'World Trading Sessions (in GMT):'
+    #hour="$(date --utc '+%H')"
+    hour=23
+    point=$(( (hour - 5) * 3 ))
+    # TODO: add moving pointer to the actual UTC time
+    # This is dirty, but it works!
+    #python3 -c "print(' ' * ${point}, end='')" && echo '▼'
+    cat << EOF
+-------------------------------------------------------------------------
+| 6| 7| 8| 9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24| 1| 2| 3| 4| 5|
+-------------------------------------------------------------------------
+|  |  |==========London==========|  |  |  |  |  |  |  |  |  |  |  |  |  |
+|  |  |  |  |  |  |  |=========New York=========|  |  |  |  |  |  |  |  |
+|==|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |=========Sydney========|
+|========|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |======Tokyo======|
+-------------------------------------------------------------------------
+EOF
+    #printf ' %.0s' {1..39} && echo '▲'
+}
+
+
+main "${@}"
