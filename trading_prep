@@ -10,29 +10,18 @@ import holidays  # pylint: disable=import-error
 
 
 class HighlightedTextCalendar(TextCalendar):
-    """Text calendar mimicking output of the UNIX `date` command.
+    """Text calendar highlighting the current day.
 
     By default, calendar.TextCalendar doesn't have the current date highlighted.
-    Copied from: https://stackoverflow.com/a/71615715
+    Inspired by: https://stackoverflow.com/a/71615715
     """
 
-    def __init__(self, day_to_highlight=-1):
-        super().__init__()
-        self._day_to_highlight = day_to_highlight
-
-    def formatday(self, day: int, weekday: int, width: int) -> str:
-        s = super().formatday(day, weekday, width)
-        if day == self._day_to_highlight:
-            s = f"\033[7m{s}\033[0m"
+    def formatday(self, day, weekday, width):
+        # Disabling pylint invalid-name check: `s` is naming convention in TextCalendar
+        s = super().formatday(day, weekday, width)  # pylint: disable=invalid-name
+        if day == datetime.today().day:
+            s = f"\033[7m{s}\033[0m"  # pylint: disable=invalid-name
         return s
-
-
-# TODO: Implement me
-class TestTextCalendar(TextCalendar):
-    """Cleaner implementation of HighlightedTextCalendar"""
-
-    def __init__(self, firstweekday: int = ...) -> None:
-        super().__init__(firstweekday)
 
 
 def report_holidays():
@@ -64,12 +53,9 @@ def report_holidays():
 def main():
     """Main entry point"""
     today = datetime.today()
-    year = today.year
-    month = today.month
-    day = today.day
 
     print()
-    print(HighlightedTextCalendar(day_to_highlight=day).formatmonth(year, month))
+    print(HighlightedTextCalendar().formatmonth(today.year, today.month))
 
     # TODO: show ongoing events (e.g. from 'odpalovaci kalendar')
 
