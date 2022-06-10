@@ -50,6 +50,37 @@ def report_holidays():
         print(f"No holiday in next {days} days.")
 
 
+def report_events():
+    """Print important ongoing events in the next 7 days."""
+    events = {
+        "2022-06-10": "US: CPI data",
+        "2022-06-15": "US: FOMC w/Projections (Possible start of QT)",
+        "2022-07-06": "US: CPI data",
+        "2022-07-13": "US: CPI data",
+        "2022-07-27": "US: FOMC",
+        # ETH 2.0
+        "2022-08-10": "US: CPI data",
+        "2022-09-13": "US: CPI data",
+        "2022-09-21": "US: FOMC w/Projections",
+        # China: 20th Party Congress (President Xi 3rd term)
+        "2022-11-02": "US: FOMC",
+        "2022-11-10": "US: CPI data",
+        "2022-12-13": "US: CPI data",
+        "2022-12-14": "US: FOMC w/Projections",
+    }
+
+    days = 7
+    found_event = False
+    for day in range(days + 1):
+        date_in_question = date.today() + timedelta(days=day)
+        date_in_question = date_in_question.isoformat()
+        if date_in_question in events:
+            found_event = True
+            print(f"{date_in_question}: {events[date_in_question]}")
+    if not found_event:
+        print(f"No holiday in next {days} days.")
+
+
 def main():
     """Main entry point"""
     today = datetime.today()
@@ -57,14 +88,17 @@ def main():
     print()
     print(HighlightedTextCalendar().formatmonth(today.year, today.month))
 
-    # TODO: show ongoing events (e.g. from 'odpalovaci kalendar')
+    print("Ongoing events:")
+    report_events()
+    print()
 
     print("Ongoing holidays:")
     report_holidays()
-
     print()
-    # FIXME: using subprocess is dirty. Implement it via Python.
+
     # print local and UTC time
+    print("Time:")
+    # FIXME: using subprocess is dirty. Implement it via Python.
     print(
         subprocess.run(
             ["date", "+%T %Z"], capture_output=True, check=True
