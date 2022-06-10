@@ -24,8 +24,8 @@ class HighlightedTextCalendar(TextCalendar):
         return s
 
 
-def report_holidays():
-    """Print ongoing holidays in the next 7 days."""
+def report_holidays(in_days):
+    """Print ongoing holidays in the next in_days days."""
     watchlist = [
         holidays.CZ(),
         holidays.UK(),
@@ -37,8 +37,7 @@ def report_holidays():
     found_holiday = False
     for country_holidays in watchlist:
         # Find and report holidays in the ongoing week (7 days), including today
-        days = 7
-        for day in range(days + 1):
+        for day in range(in_days + 1):
             date_in_question = date.today() + timedelta(days=day)
             if date_in_question in country_holidays:
                 found_holiday = True
@@ -47,10 +46,10 @@ def report_holidays():
                     country_holidays.get(date_in_question),
                 )
     if not found_holiday:
-        print(f"No holiday in next {days} days.")
+        print("none")
 
 
-def report_events():
+def report_events(in_days):
     """Print important ongoing events in the next 7 days."""
     events = {
         "2022-06-10": "US: CPI data",
@@ -69,31 +68,31 @@ def report_events():
         "2022-12-14": "US: FOMC w/Projections",
     }
 
-    days = 7
     found_event = False
-    for day in range(days + 1):
+    for day in range(in_days + 1):
         date_in_question = date.today() + timedelta(days=day)
         date_in_question = date_in_question.isoformat()
         if date_in_question in events:
             found_event = True
             print(f"{date_in_question}: {events[date_in_question]}")
     if not found_event:
-        print(f"No holiday in next {days} days.")
+        print("none")
 
 
 def main():
     """Main entry point"""
     today = datetime.today()
+    days = 7
 
     print()
     print(HighlightedTextCalendar().formatmonth(today.year, today.month))
 
-    print("Ongoing events:")
-    report_events()
+    print(f"Ongoing events in next {days} day(s):")
+    report_events(days)
     print()
 
-    print("Ongoing holidays:")
-    report_holidays()
+    print(f"Ongoing holidays in next {days} day(s):")
+    report_holidays(days)
     print()
 
     # print local and UTC time
