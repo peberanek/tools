@@ -4,7 +4,7 @@ Collection of various command-line tools. Used and tested on [Fedora 36 Silverbl
 
 ## trading_prep
 
-Print basic info for quick orientation in the actual trading day.
+Print info for quick orientation in the current trading day.
 
 ## fxrates
 
