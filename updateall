@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+set -o errexit
+
+echo 'Updating system...'
+if command -v rpm-ostree; then
+    rpm-ostree upgrade
+elif command -v dnf; then
+    sudo dnf upgrade -y
+else
+    echo 'Cannot update system: no rpm-ostree or dnf'
+    exit 1
+fi
+
+if command -v flatpak; then
+    echo 'Updating Flatpak apps...'
+    flatpak update -y
+fi
