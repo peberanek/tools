@@ -1,5 +1,0 @@
-pytest
-isort
-black
-pylint
-mypy

@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-
-# Run code quality checks
-make style_check
