@@ -1,18 +1,77 @@
 #!/usr/bin/env bash
+#
+# Universal updater for Fedora Linux
+#
+# Performs system update, updates Flatpak apps, and then executes optional
+# scripts in ~/.updateall/scripts.
+#
 
 set -o errexit
 
-echo 'Updating system...'
-if command -v rpm-ostree; then
-    rpm-ostree upgrade
-elif command -v dnf; then
-    sudo dnf upgrade -y
-else
-    echo 'Cannot update system: no rpm-ostree or dnf'
-    exit 1
-fi
 
-if command -v flatpak; then
-    echo 'Updating Flatpak apps...'
+error() {
+    echo "Error: $*" >&2
+}
+
+
+echo_update_info() {
+    echo "Running update: ${1}..."
+}
+
+
+update_rpm_ostree() {
+    echo_update_info "rpm-ostree"
+    rpm-ostree upgrade
+}
+
+
+update_flatpak() {
+    echo_update_info "flatpak"
     flatpak update -y
-fi
+}
+
+
+update_dnf() {
+    echo_update_info "dnf"
+    sudo dnf upgrade -y
+}
+
+
+main() {
+    os_release='/etc/os-release'
+    # shellcheck disable=SC1090
+    if ! source "${os_release}"; then
+        error "unsupported distro: missing ${os_release}"
+        exit 1
+    elif [[ "${ID}" != "fedora" ]]; then
+        error "unsupported distro: ${ID}"
+        exit 1
+    fi
+
+    if [[ "${VARIANT_ID}" == "silverblue" ]]; then
+        update_rpm_ostree
+        update_flatpak
+    elif [[ "${VARIANT_ID}" == "container" ]]; then
+        update_dnf
+    elif [[ "${VARIANT_ID}" == "workstation" ]]; then
+        update_dnf
+        update_flatpak
+    else
+        error "unsupported variant: ${VARIANT_ID}"
+    fi
+
+    scripts_dir="$HOME/.updateall/scripts"
+    if [[ -d "${scripts_dir}" ]]; then
+        for script in "${scripts_dir}"/*; do
+            if [[ -f "${script}" ]]; then
+                echo_update_info "script: ${script}"
+                "${script}"  # execute
+            fi
+        done
+    fi
+
+    echo "All done."
+}
+
+
+main "${@}"
