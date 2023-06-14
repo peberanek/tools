@@ -3,7 +3,7 @@
 # Universal updater for Fedora Linux
 #
 # Performs system update, updates Flatpak apps, and then executes optional
-# scripts in ~/.updateall/scripts.
+# scripts in ~/.updt/scripts.
 #
 
 set -o errexit
@@ -62,7 +62,7 @@ main() {
         error "unsupported variant: ${VARIANT_ID}"
     fi
 
-    scripts_dir="$HOME/.updateall/scripts"
+    scripts_dir="$HOME/.updt/scripts"
     if [[ -d "${scripts_dir}" ]]; then
         for script in "${scripts_dir}"/*; do
             if [[ -f "${script}" ]]; then
