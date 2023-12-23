@@ -1,0 +1,51 @@
+#!/bin/bash
+#
+# Sync contents of $HOME dir with a destination dir.
+#
+# Config files:
+#   ~/.homesync/config.bash
+#   ~/.homesync/exclude
+#
+
+set -o errexit
+set -o nounset
+
+config_dir="${HOME}/.homesync"
+config_file="${config_dir}/config.bash"
+exclude_file="${config_dir}/exclude"
+
+if [[ ! -d "${config_dir}" ]]; then
+    echo "config dir not found: ${config_dir}"
+    exit 1
+elif [[ ! -f "${config_file}" ]]; then
+    echo "config file not found: ${config_file}"
+    exit 1
+elif [[ ! -f "${exclude_file}" ]]; then
+    echo "exclude file not found: ${exclude_file}"
+    exit 1
+fi
+
+# shellcheck source=/dev/null
+source "${config_file}"
+
+if [[ -z "${destination:-}" ]]; then
+    echo "${config_file}: 'destination' not set"
+    exit 1
+elif [[ ! -d "${destination}" ]]; then
+    echo "destination dir not found: ${destination}"
+    exit 1
+fi
+
+echo "config file: ${config_file}"
+echo "exclude file: ${exclude_file}"
+echo "destination dir: ${destination}"
+
+rsync \
+    --verbose \
+    --archive \
+    --human-readable \
+    --exclude-from="${exclude_file}" \
+    --delete \
+    --delete-excluded \
+    "${HOME}" \
+    "${destination}"
