@@ -1,51 +1,64 @@
-#!/bin/bash
-#
-# Sync contents of $HOME dir with a destination dir.
-#
-# Config files:
-#   ~/.homesync/config.bash
-#   ~/.homesync/exclude
-#
+#!/bin/python3
+"""Rsync wrapper for syncing contents of $HOME with a destination directory.
 
-set -o errexit
-set -o nounset
+notes:
+  If the destination directory does not exist, it is created automatically.
+"""  # noqa: D405
+from __future__ import annotations
 
-config_dir="${HOME}/.homesync"
-config_file="${config_dir}/config.bash"
-exclude_file="${config_dir}/exclude"
+import argparse
+import subprocess
+import sys
+from pathlib import Path
 
-if [[ ! -d "${config_dir}" ]]; then
-    echo "config dir not found: ${config_dir}"
-    exit 1
-elif [[ ! -f "${config_file}" ]]; then
-    echo "config file not found: ${config_file}"
-    exit 1
-elif [[ ! -f "${exclude_file}" ]]; then
-    echo "exclude file not found: ${exclude_file}"
-    exit 1
-fi
 
-# shellcheck source=/dev/null
-source "${config_file}"
+def run_rsync(dest_dir: Path, exclude_from: Path | None = None) -> int:
+    """Sync contents of $HOME with the dest_dir.
 
-if [[ -z "${destination:-}" ]]; then
-    echo "${config_file}: 'destination' not set"
-    exit 1
-elif [[ ! -d "${destination}" ]]; then
-    echo "destination dir not found: ${destination}"
-    exit 1
-fi
+    Args:
+        dest_dir (Path): path to a destination dir
+        exclude_from (Path): path to a file with rsync exclude patterns
 
-echo "config file: ${config_file}"
-echo "exclude file: ${exclude_file}"
-echo "destination dir: ${destination}"
+    Side effects:
+        * Syncs contents of $HOME with the dest_dir via rsync.
+        * Prints to stdout or stderr.
 
-rsync \
-    --verbose \
-    --archive \
-    --human-readable \
-    --exclude-from="${exclude_file}" \
-    --delete \
-    --delete-excluded \
-    "${HOME}" \
-    "${destination}"
+    Returns:
+        int: 0 if sync was successful, 1 otherwise.
+    """
+    rsync_cmd = ["rsync", "--verbose", "--archive", "--human-readable", "--delete"]
+    if exclude_from:
+        rsync_cmd.extend(["--exclude-from", str(exclude_from), "--delete-excluded"])
+    rsync_cmd.extend(
+        [
+            # Trailing slash prevents creating additional directory level 'home'
+            # in dest_dir
+            str(Path.home()) + "/",
+            str(dest_dir),
+        ]
+    )
+    try:
+        subprocess.run(rsync_cmd, check=True, shell=False)  # noqa: S603
+    except subprocess.CalledProcessError as exc:
+        print(exc, file=sys.stderr)  # noqa: T201
+        return 1
+    return 0
+
+
+def main() -> int:  # noqa: D103
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument("dest_dir", type=Path, help="destination directory")
+    parser.add_argument(
+        "--exclude-from",
+        type=Path,
+        help="read rsync exclude patterns from FILE",
+        metavar="FILE",
+    )
+    args = parser.parse_args()
+    return run_rsync(args.dest_dir, args.exclude_from)
+
+
+if __name__ == "__main__":
+    sys.exit(main())

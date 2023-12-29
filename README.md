@@ -8,3 +8,7 @@ A colection of standalone scripts.
 pipenv sync
 pre-commit install
 ```
+
+``` bash
+pipenv run pytest
+```
