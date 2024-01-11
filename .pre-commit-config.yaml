@@ -1,5 +1,7 @@
 # https://pre-commit.com
 # https://pre-commit.com/hooks.html
+default_install_hook_types: [pre-commit, pre-push]
+default_stages: [pre-commit]
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
@@ -20,3 +22,11 @@ repos:
     rev: v1.7.1
     hooks:
       - id: mypy
+  - repo: local
+    hooks:
+      - id: pytest
+        name: pytest
+        language: system
+        pass_filenames: false
+        entry: pipenv run pytest
+        stages: [pre-push]
