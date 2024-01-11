@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 
 this_dir = Path(os.path.realpath(__file__)).parent
-homesync_executable = this_dir / ".." / "homesync"
+homesync_executable = this_dir / ".." / "tools" / "homesync"
 
 
 @pytest.fixture(autouse=True)
