@@ -1,13 +1,13 @@
 """Tests of homesync."""
 import filecmp
-import os
 import subprocess
 from pathlib import Path
 
 import pytest
 
-this_dir = Path(os.path.realpath(__file__)).parent
-homesync_executable = this_dir / ".." / "tools" / "homesync"
+from . import conftest
+
+executable = conftest.tools_dir / "homesync"
 
 
 @pytest.fixture(autouse=True)
@@ -37,11 +37,11 @@ def mock_user_data(mock_home: Path) -> Path:
 def test_no_args():
     """Test running homesync without arguments.
 
-    Running homesync without arguments should fail with the exit code 2
-    (incorrect usage). A help message should be printed to stderr.
+    Running homesync without arguments should fail with the exit status for
+    incorrect usage. A help message should be printed to stderr.
     """
-    proc = subprocess.run([homesync_executable], check=False, capture_output=True)
-    assert proc.returncode == 2  # noqa: PLR2004
+    proc = subprocess.run([executable], check=False, capture_output=True)
+    assert proc.returncode == conftest.CmdExitStatus.INCORRECT_USAGE
     assert not proc.stdout
     assert b"usage: homesync" in proc.stderr
 
@@ -50,12 +50,10 @@ def test_no_args():
 def test_help(help_option):
     """Test homesync help message.
 
-    Help message should be printed to stdout. Homesync should exit with
-    exit code 0. Both short (-h) and long (--help) help options should work.
+    Help message should be printed to stdout. Homesync should exit with success.
+    Both short (-h) and long (--help) help options should work.
     """
-    proc = subprocess.run(
-        [homesync_executable, help_option], check=True, capture_output=True
-    )
+    proc = subprocess.run([executable, help_option], check=True, capture_output=True)
     assert not proc.stderr
     assert b"usage: homesync" in proc.stdout
 
@@ -101,9 +99,7 @@ def test_sync(mock_home: Path, dest_dir: Path):
     Homesync should sync all files from a mock $HOME dir to the dest dir.
     All synced files should be printed to stdout.
     """
-    proc = subprocess.run(
-        [homesync_executable, dest_dir], check=True, capture_output=True
-    )
+    proc = subprocess.run([executable, dest_dir], check=True, capture_output=True)
     assert_dirs_equal(filecmp.dircmp(mock_home, dest_dir))
     assert not proc.stderr
     assert b"user/Documents/document1" in proc.stdout
@@ -127,7 +123,7 @@ def test_sync_with_excluded_files(
     """
     proc = subprocess.run(
         [
-            homesync_executable,
+            executable,
             dest_dir,
             "--exclude-from",
             exclude_patterns_file,
