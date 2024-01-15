@@ -45,7 +45,7 @@ def invalid_msg_file(tmp_path: Path) -> dict:
         }
     """
     unreadable_file = tmp_path / "unreadable"
-    unreadable_file.touch(mode=200)  # writable, so it can be deleted during cleanup
+    unreadable_file.touch(mode=0o200)  # writable, so it can be deleted during cleanup
     empty_file = tmp_path / "empty"
     empty_file.touch()
     return {
