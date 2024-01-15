@@ -4,8 +4,11 @@
 
 # http://mywiki.wooledge.org/BashFAQ/037
 BOLD=$(tput bold)
+CYAN=$(tput setaf 6)
+RED=$(tput setaf 1)
 RESET=$(tput sgr0)
-readonly BOLD RESET
+# shellcheck disable=SC2034
+readonly BOLD CYAN YELLOW RED RESET
 
 
 # Print a message to stderr.
