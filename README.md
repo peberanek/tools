@@ -57,12 +57,6 @@ Add this to your `~/.bashrc`
 motd ~/.motd
 ```
 
-## normname
-
-Normalize filenames.
-
-Unstable. TBD.
-
 ## How to run tests
 
 ```bash
