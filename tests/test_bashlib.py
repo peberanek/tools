@@ -105,7 +105,6 @@ def test_confirm_cmd(tmp_path: Path, script: Path, answer: str):
     proc = subprocess.run(
         [script], input=answer.encode(), check=True, capture_output=True
     )
-    assert b"touch my_file" in proc.stdout
     assert not proc.stderr
     new_file = tmp_path / "my_file"
     if answer == "y":

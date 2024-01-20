@@ -50,9 +50,7 @@ bashlib::ask() {
 #   Writes the command to stdout if the input is coming from a terminal.
 #   Reads the confirmation from stdin.
 bashlib::confirm_cmd() {
-    echo
-    echo "${BOLD}${1}${RESET}"
-    if bashlib::ask "Execute?"; then
+    if bashlib::ask "Execute: ${BOLD}${1}${RESET}"; then
         eval "${1}"
     fi
 }
